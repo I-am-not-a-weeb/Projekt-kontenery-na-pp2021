@@ -6,14 +6,17 @@
 #include <conio.h>
 #include "listy.h"
 
-int funkcja()
-{
 
-}
+
 
 int main()
 {
- 
+	ADRES pierwszy = NULL, ostatni = NULL, pom;
+	int obj;
+	FILE* plik = fopen("kontenery.txt", "rw");
+	printf("Wpisz objetosc metryczna ladunku: "); 
+	scanf("%d", &obj);
+	spis(plik,pierwszy);
 }
 
 // Uruchomienie programu: Ctrl + F5 lub menu Debugowanie > Uruchom bez debugowania
