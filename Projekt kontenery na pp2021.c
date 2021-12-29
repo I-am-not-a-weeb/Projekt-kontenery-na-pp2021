@@ -51,6 +51,17 @@ void WypiszListe(ADRES pierwszy)
 		printf("%d %d %d %d", pom->d, pom->s, pom->h, pom->yop);
 		pom = pom->next;
 	}
+
+	
+	while (*adres1 != NULL) adres1 = &((*adres1)->next);
+	*adres1 = nowy;
+	nowy->next = NULL;
+	}
+	
+	
+	
+	
+
 }
 
 int main()
