@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Projekt kontenery na pp2021", "Projekt kontenery na pp2021.vcxproj", "{29A2C6E7-10D0-4132-8B4E-29641D47B04B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9DB882AA-7137-4D33-858F-F7394FA0317C}"
+	ProjectSection(SolutionItems) = preProject
+		chuj.txt = chuj.txt
+		kontenery.txt = kontenery.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
