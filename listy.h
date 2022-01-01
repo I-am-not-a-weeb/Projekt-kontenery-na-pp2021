@@ -2,7 +2,8 @@
 
 typedef struct element
 {
-	int d, s, h, yop, v, obj; // d - szerokosc, s - dlugosc, h - glebokosc, yop - rok produkcji, v - wartosc
+	int d, s, h, yop, v, id;
+	double obj;				// d - szerokosc, s - dlugosc, h - glebokosc, yop - rok produkcji, v - wartosc
 	struct element* next;
 } t_element;
 
