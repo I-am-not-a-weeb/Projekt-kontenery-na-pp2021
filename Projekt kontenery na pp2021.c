@@ -1,10 +1,10 @@
-﻿#pragma warning(disable : 4996)
+#pragma warning(disable : 4996)
 #pragma warning(disable : 6011)
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
-#include "listy.h"
-#define K 4
+#include "lista.h"
+
 
 int liczba_linii(FILE* plikfunc)   //zwraca liczbe linii w pliku
 {
@@ -20,24 +20,6 @@ int liczba_linii(FILE* plikfunc)   //zwraca liczbe linii w pliku
 	return lines + 1;
 
 }
-
-void spis(int tab[], t_element** adpocz, int liczba_linii_func)     //funkcja spisujaca liste z pliku, polaczyc z sortowaniem
-{
-	t_element* temp;
-	*adpocz = NULL;
-	for (int i = 0; i < liczba_linii_func; i++)
-	{
-		temp = (t_element*)malloc(sizeof(t_element));
-		temp->d = tab[i * 5];
-		temp->s = tab[i * 5 + 1];
-		temp->h = tab[i * 5 + 2];
-		temp->yop = tab[i * 5 + 3];
-		temp->v = tab[i * 5 + 4];
-		temp->obj = ((temp->d) / 100) * ((temp->s) / 100) * ((temp->h) / 100);
-		temp->next = *adpocz;
-		*adpocz = temp;
-	}
-}
 void WypiszListe(t_element* poczatek)
 {
 	while (poczatek)
@@ -49,30 +31,28 @@ void WypiszListe(t_element* poczatek)
 		printf("Rok: %d ", poczatek->yop);
 		printf("Wartosc: %d ", poczatek->v);
 		printf("Objetosc: %f \n", poczatek->obj);
-
 		poczatek = poczatek->next;
 	}
 }
 t_element* dodajNaKoncu(int dfunc, int sfunc, int gfunc, double objfunc, int rzfunc,int valfunc, t_element* koniec,int i)
 {
-	t_element* wsk;
+	t_element* temp;
+	temp = (t_element*)malloc(sizeof(t_element));
 
-	wsk = (t_element*)malloc(sizeof(t_element));
-
-	wsk->d = dfunc;
-	wsk->s = sfunc;
-	wsk->h = gfunc;
-	wsk->obj = objfunc;
-	wsk->yop = rzfunc;
-	wsk->v = valfunc;
-	wsk->id = i;
-	wsk->next = NULL;
-	if (koniec) koniec->next = wsk;
-	return wsk;
+	temp->d = dfunc;
+	temp->s = sfunc;
+	temp->h = gfunc;
+	temp->obj = objfunc;
+	temp->yop = rzfunc;
+	temp->v = valfunc;
+	temp->id = i;
+	temp->next = NULL;
+	if (koniec) koniec->next = temp;
+	return temp;
 }
 t_element* wstawElement(int dfunc, int sfunc, int gfunc, double objfunc, int rzfunc,int valfunc, t_element* poczatek, int i)
 {
-	t_element* temp, * poprzednik, * nastepnik;
+	t_element* temp, * prev, * nexty;
 	temp = (t_element*)malloc(sizeof(t_element));
 	temp->d = dfunc;
 	temp->s = sfunc;
@@ -81,47 +61,51 @@ t_element* wstawElement(int dfunc, int sfunc, int gfunc, double objfunc, int rzf
 	temp->yop = rzfunc;
 	temp->v = valfunc;
 	temp->id = i;
-	poprzednik = NULL;
-	nastepnik = poczatek;
-	while (nastepnik != NULL)
+	if (temp->d <= 0 || temp->s <= 0 || temp->h <= 0 || temp->v <= 0) 
 	{
-		if(nastepnik->obj!=objfunc)
-		if (nastepnik->obj < objfunc)
+		printf("Kontener w linijce %d. pliku zrodlowego zawiera niepoprawne dane, zanim kontynuujesz sprawdz plik zrodlowy", i+1);
+		exit(0);
+	}
+	prev = NULL;
+	nexty = poczatek;
+	while (nexty != NULL)
+	{
+		if(nexty->obj!=objfunc)
+		if (nexty->obj < objfunc)
 		{
-			temp->next = nastepnik;
-			if (poprzednik != NULL)               //dolaczanie wewnatrz listy
+			temp->next = nexty;
+			if (prev != NULL)             
 			{
-				poprzednik->next = temp;
+				prev->next = temp;
 				return poczatek;
 			}
-			else return temp;                    //dolaczanie na poczatku listy
+			else return temp;                   
 		}
 		else
 		{
-			poprzednik = nastepnik;
-			nastepnik = poprzednik->next;
+			prev = nexty;
+			nexty = prev->next;
 		}
-		else if(nastepnik->yop < rzfunc)
+		else if(nexty->yop < rzfunc)
 		{
-			temp->next = nastepnik;
-			if (poprzednik != NULL)               //dolaczanie wewnatrz listy
+			temp->next = nexty;
+			if (prev != NULL)               
 			{
-				poprzednik->next = temp;
+				prev->next = temp;
 				return poczatek;
 			}
-			else return temp;                    //dolaczanie na poczatku listy
+			else return temp;                    
 		}
 		else
 		{
-			poprzednik = nastepnik;
-			nastepnik = poprzednik->next;
+			prev = nexty;
+			nexty = prev->next;
 		}
 	}
-	temp->next = NULL;                  //dolaczanie na koncu listy
-	poprzednik->next = temp;
+	temp->next = NULL;                 
+	prev->next = temp;
 	return poczatek;
 }
-
 double objcal(t_element* poczatek)
 {
 	
@@ -133,16 +117,45 @@ double objcal(t_element* poczatek)
 	}
 	return suma;
 }
+t_element* usunPoczatek(t_element* poczatek)
+{
+	t_element* wsk;
+	wsk = poczatek->next;
+	free(poczatek);
+	return wsk;
+}
+t_element* kontenery(t_element* poczatek, double objfunc)
+{
+	while ((objfunc > 0)&&(poczatek->next!=NULL))
+	{	
+		printf("Kontenery do uzycia:\n");
+		{
+			printf("ID: %d ", poczatek->id);
+			printf("Dlugosc: %d ", poczatek->d);
+			printf("Szerokosc: %d ", poczatek->s);
+			printf("Glebokosc: %d ", poczatek->h);
+			printf("Rok: %d ", poczatek->yop);
+			printf("Wartosc: %d ", poczatek->v);
+			printf("Objetosc: %f \n", poczatek->obj);
+		}
+		objfunc = objfunc - poczatek->obj;
+		poczatek->next = usunPoczatek(poczatek);
+		poczatek = poczatek->next;
+	}
+	return poczatek;
+}
+
+
 
 int main()
 {
 
 	FILE* plik;
-	plik = fopen("abc.txt", "r");
+	plik = fopen("kontenery.txt", "r");
 	if (!plik) { printf("Plik nie mogl zostac otwarty."); return 1; }
 	int w = liczba_linii(plik);
-	fclose(plik);
-	plik = fopen("abc.txt", "r");
+	fclose(plik);				//reset pliku
+	plik = fopen("kontenery.txt", "r");
 	if (!plik) { printf("Plik nie mogl zostac otwarty."); return 1; }
 
 
@@ -157,7 +170,6 @@ int main()
 		if (i == 0)poczatek = koniec = dodajNaKoncu(dl,sz,gl,obj, rz, war,NULL,i);
 		else
 		poczatek=wstawElement(dl,sz,gl,obj,rz,war,poczatek,i);
-
 	}
 	
 
@@ -168,10 +180,12 @@ int main()
 	scanf("%d", &objprz);
 	if (objprz > objcal(poczatek)) 
 	{
-		printf("Ilosc kontenerow z danymi pojemnoscia nie starczy do przerzutu paczk"); return 0;
+		printf("Ilosc kontenerow na stanie nie starczy do transportu"); return 0;
 	}
-	//jakie kontenery sa potrzebne do przerzutu
-	//wypisac te kontenery i usunac je
-	//funkcja wyszukujaca kontenery po id i kasujaca je
+	else poczatek = kontenery(poczatek,objprz);
+	
+	printf("\nLista kontenerow na stanie po odebraniu zamowienia na: %d metrow szesciennych ladunku:\n", objprz);
+	WypiszListe(poczatek);
+	printf("\n");
 	getch();
 }
